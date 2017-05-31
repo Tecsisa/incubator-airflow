@@ -114,6 +114,23 @@ class TestApiExperimental(unittest.TestCase):
         )
         self.assertEqual(404, response.status_code)
 
+    def test_trigger_dag_with_conf(self):
+        url_template = '/api/experimental/dags/{}/dag_runs'
+        response = self.app.post(
+            url_template.format('example_bash_operator'),
+            data=json.dumps(dict()),
+            content_type="application/json"
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        response = self.app.post(
+            url_template.format('example_bash_operator'),
+            data=json.dumps(dict(conf=dict(some_key='some_value'))),
+            content_type="application/json"
+        )
+        self.assertEqual(404, response.status_code)
+
     def test_trigger_dag_for_date(self):
         url_template = '/api/experimental/dags/{}/dag_runs'
         dag_id = 'example_bash_operator'
