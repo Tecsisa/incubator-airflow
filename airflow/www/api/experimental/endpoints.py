@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
+import json
 
 import airflow.api
 
@@ -48,7 +49,7 @@ def trigger_dag(dag_id):
 
     conf = None
     if 'conf' in data:
-        conf = data['conf']
+        conf = json.dumps(data['conf'])
 
     execution_date = None
     if 'execution_date' in data and data['execution_date'] is not None:
