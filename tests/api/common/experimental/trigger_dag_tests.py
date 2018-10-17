@@ -88,6 +88,47 @@ class TriggerDagTests(unittest.TestCase):
 
         self.assertEqual(3, len(triggers))
 
+    @mock.patch('airflow.models.DagRun')
+    @mock.patch('airflow.models.DagBag')
+    def test_trigger_dag_with_str_conf(self, dag_bag_mock, dag_run_mock):
+        dag_id = "dag_run_exist"
+        dag = DAG(dag_id)
+        dag_bag_mock.dags = [dag_id]
+        dag_bag_mock.get_dag.return_value = dag
+        dag_run_mock.find.return_value = DagRun()
+        conf = "{\"foo\": \"bar\"}"
+        self.assertRaises(
+            AirflowException,
+            _trigger_dag,
+            dag_id,
+            dag_bag_mock,
+            dag_run_mock,
+            run_id=None,
+            conf=conf,
+            execution_date=None,
+            replace_microseconds=True,
+        )
+
+    @mock.patch('airflow.models.DagRun')
+    @mock.patch('airflow.models.DagBag')
+    def test_trigger_dag_with_dict_conf(self, dag_bag_mock, dag_run_mock):
+        dag_id = "dag_run_exist"
+        dag = DAG(dag_id)
+        dag_bag_mock.dags = [dag_id]
+        dag_bag_mock.get_dag.return_value = dag
+        dag_run_mock.find.return_value = DagRun()
+        conf = dict(foo="bar")
+        self.assertRaises(
+            AirflowException,
+            _trigger_dag,
+            dag_id,
+            dag_bag_mock,
+            dag_run_mock,
+            run_id=None,
+            conf=conf,
+            execution_date=None,
+            replace_microseconds=True,
+        )
 
 if __name__ == '__main__':
     unittest.main()
